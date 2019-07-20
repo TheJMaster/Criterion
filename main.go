@@ -35,23 +35,28 @@ func main() {
 
 	var wg sync.WaitGroup
 	client := criterionlib.EmptyClient{}
-	for _, cluster := range config.Clusters {
-		for _, dropRate := range config.DropRates {
-			for _, numClients := range config.NumClients {
-				for i := int64(1); i <= numClients; i++ {
-					wg.Add(1)
-					go func() {
-						defer wg.Done()
-						client.Run(cluster, dropRate, false)
-					}()
-				}
-				if config.RandomFailures {
+	var metrics []criterionlib.Metric
+	for i := int64(1); i <= config.Iterations; i++ {
+		for _, cluster := range config.Clusters {
+			for _, dropRate := range config.DropRates {
+				for _, numClients := range config.NumClients {
 					for i := int64(1); i <= numClients; i++ {
 						wg.Add(1)
 						go func() {
 							defer wg.Done()
-							client.Run(cluster, dropRate, true)
+							metric := client.Run(cluster, dropRate, false)
+							metrics = append(metrics, metric)
 						}()
+					}
+					if config.RandomFailures {
+						for i := int64(1); i <= numClients; i++ {
+							wg.Add(1)
+							go func() {
+								defer wg.Done()
+								metric := client.Run(cluster, dropRate, true)
+								metrics = append(metrics, metric)
+							}()
+						}
 					}
 				}
 			}

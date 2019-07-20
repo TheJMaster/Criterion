@@ -6,4 +6,5 @@ type Config struct {
 	DropRates      []float64
 	NumClients     []int64
 	RandomFailures bool
+	Iterations     int64
 }
