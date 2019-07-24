@@ -20,5 +20,5 @@
         3
     ],
     "randomFailures": true,
-    "iterations": 10
+    "iterations": 1
 }
