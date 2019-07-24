@@ -36,6 +36,7 @@ func main() {
 		log.Fatalf("could not unmarshal json from config file: %s\n", err.Error())
 	}
 
+	_ = os.Mkdir("./out", 0777)
 	t := time.Now()
 	outFile := fmt.Sprintf("out/%s.csv", t.Format("2006-01-02_15:04:05"))
 	f, err := os.Create(outFile)
